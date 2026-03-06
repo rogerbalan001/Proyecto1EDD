@@ -11,4 +11,4 @@ Biograph es una aplicación de escritorio desarrollada en Java que modela Redes 
 * Angelyna
 
 **Repositorio del proyecto:**
-[[AQUÍ_VA_TU_ENLACE_DE_GITHUB]](https://github.com/rogerbalan001/Proyecto1EDD)
+(https://github.com/rogerbalan001/Proyecto1EDD)
