@@ -4,15 +4,27 @@
  */
 package biograph.logic;
 
+/**
+ * Clase genérica que implementa una Lista Simplemente Enlazada construida desde cero.
+ * Esta clase sustituye el uso de librerías nativas como ArrayList, cumpliendo con las restricciones del proyecto.
+ * * @param <T> El tipo de elementos que contendrá la lista.
+ */
 public class Lista<T> {
     private Nodo<T> pFirst;
     private int size;
 
+    /**
+     * Constructor que inicializa una lista vacía.
+     */
     public Lista() {
         this.pFirst = null;
         this.size = 0;
     }
 
+    /**
+     * Agrega un nuevo elemento al final de la lista.
+     * * @param dato El elemento a insertar.
+     */
     public void add(T dato) {
         Nodo<T> nuevo = new Nodo<>(dato);
         if (isEmpty()) {
@@ -27,6 +39,11 @@ public class Lista<T> {
         size++;
     }
 
+    /**
+     * Obtiene un elemento de la lista dada su posición (índice).
+     * * @param index La posición del elemento a obtener (inicia en 0).
+     * @return El elemento en el índice indicado, o null si el índice es inválido.
+     */
     public T get(int index) {
         if (index < 0 || index >= size) return null;
         Nodo<T> aux = pFirst;
@@ -36,6 +53,10 @@ public class Lista<T> {
         return aux.getDato();
     }
 
+    /**
+     * Elimina la primera ocurrencia de un dato específico en la lista.
+     * * @param dato El elemento a eliminar.
+     */
     public void remove(T dato) {
         if (isEmpty()) return;
 
@@ -56,10 +77,18 @@ public class Lista<T> {
         }
     }
 
+    /**
+     * Verifica si la lista se encuentra vacía.
+     * * @return true si la lista no contiene elementos, false en caso contrario.
+     */
     public boolean isEmpty() {
         return pFirst == null;
     }
 
+    /**
+     * Obtiene la cantidad de elementos almacenados en la lista.
+     * * @return El tamaño actual de la lista.
+     */
     public int size() {
         return size;
     }

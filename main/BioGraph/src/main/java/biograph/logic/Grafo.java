@@ -8,16 +8,25 @@
  */
 package biograph.logic;
 
+/**
+ * Estructura de Datos principal que modela la Red de Interacción Proteína-Proteína (PPIN).
+ * Implementa un Grafo No Dirigido utilizando una Lista de Adyacencia y algoritmos de análisis.
+ */
 public class Grafo {
     private Lista<Vertice> vertices;
 
+    /**
+     * Constructor que inicializa el grafo vacío.
+     */
     public Grafo() {
         this.vertices = new Lista<>();
     }
 
-    // ==========================================
-    // MÉTODOS BASE DEL TDA GRAFO
-    // ==========================================
+    /**
+     * Busca una proteína en el grafo dado su nombre.
+     * * @param nombre El nombre exacto de la proteína.
+     * @return El objeto Vertice correspondiente, o null si no se encuentra.
+     */
     public Vertice buscarVertice(String nombre) {
         for (int i = 0; i < vertices.size(); i++) {
             Vertice v = vertices.get(i);
@@ -28,12 +37,23 @@ public class Grafo {
         return null;
     }
 
+    /**
+     * Inserta una nueva proteína en el grafo si no existe previamente.
+     * * @param nombre El identificador de la nueva proteína.
+     */
     public void insertarVertice(String nombre) {
         if (buscarVertice(nombre) == null) {
             vertices.add(new Vertice(nombre));
         }
     }
 
+    /**
+     * Establece una interacción bidireccional entre dos proteínas.
+     * Crea los vértices automáticamente si no existen.
+     * * @param origen Nombre de la primera proteína.
+     * @param destino Nombre de la segunda proteína.
+     * @param peso Costo de la interacción.
+     */
     public void insertarArista(String origen, String destino, int peso) {
         Vertice vOrigen = buscarVertice(origen);
         Vertice vDestino = buscarVertice(destino);
@@ -52,6 +72,11 @@ public class Grafo {
         vDestino.agregarArista(vOrigen, peso);
     }
     
+    /**
+     * Elimina una proteína del grafo y limpia todas las conexiones hacia ella 
+     * en el resto de los vértices para mantener la consistencia estructural.
+     * * @param nombre Nombre de la proteína a eliminar.
+     */
     public void eliminarVertice(String nombre){
         Vertice v = buscarVertice(nombre);
         if(v != null){
@@ -64,14 +89,18 @@ public class Grafo {
         }
     }
 
-    // Método necesario para poder dibujar los nodos y guardar el archivo
+    /**
+     * Obtiene la lista completa de vértices en el grafo.
+     * * @return Lista de vértices almacenados.
+     */
     public Lista<Vertice> getVertices() {
         return vertices;
     }
 
-    // ==========================================
-    // 1. CENTRALIDAD DE GRADO (Buscar el Hub)
-    // ==========================================
+    /**
+     * Calcula la centralidad de grado para encontrar el "Hub" o Diana Terapéutica.
+     * * @return La proteína (Vertice) con la mayor cantidad de interacciones.
+     */
     public Vertice obtenerHub() {
         if (vertices.size() == 0) return null;
         
@@ -88,9 +117,10 @@ public class Grafo {
         return hub;
     }
 
-    // ==========================================
-    // 2. DETECCIÓN DE COMPLEJOS (Usando DFS)
-    // ==========================================
+    /**
+     * Detecta todos los complejos proteicos (subgrafos conexos) en la red utilizando DFS.
+     * * @return Una lista que contiene listas de vértices, agrupadas por complejo.
+     */
     public Lista<Lista<Vertice>> obtenerComplejos() {
         Lista<Lista<Vertice>> complejos = new Lista<>();
         Lista<Vertice> visitados = new Lista<>();
@@ -106,6 +136,12 @@ public class Grafo {
         return complejos;
     }
 
+    /**
+     * Algoritmo de Búsqueda en Profundidad (DFS) iterativo/recursivo auxiliar.
+     * * @param v Vértice actual.
+     * @param visitados Lista de nodos ya procesados.
+     * @param complejoActual Agrupación actual del complejo proteico.
+     */
     private void dfs(Vertice v, Lista<Vertice> visitados, Lista<Vertice> complejoActual) {
         visitados.add(v);
         complejoActual.add(v);
@@ -118,6 +154,12 @@ public class Grafo {
         }
     }
 
+    /**
+     * Verifica si un vértice específico se encuentra dentro de una lista proporcionada.
+     * * @param lista Lista en donde se realizará la búsqueda.
+     * @param v Vértice a buscar.
+     * @return true si el vértice está en la lista, false en caso contrario.
+     */
     private boolean contieneVertice(Lista<Vertice> lista, Vertice v) {
         for (int i = 0; i < lista.size(); i++) {
             if (lista.get(i).getNombre().equals(v.getNombre())) return true;
@@ -125,9 +167,13 @@ public class Grafo {
         return false;
     }
 
-    // ==========================================
-    // 3. ALGORITMO DE DIJKSTRA (Ruta más corta)
-    // ==========================================
+    /**
+     * Implementa el algoritmo de Dijkstra para encontrar la ruta metabólica más corta
+     * entre dos proteínas dadas.
+     * * @param origen Proteína inicial de la ruta.
+     * @param destino Proteína objetivo.
+     * @return Una Lista ordenada con los vértices que componen la ruta óptima.
+     */
     public Lista<Vertice> dijkstra(String origen, String destino) {
         Vertice vOrigen = buscarVertice(origen);
         Vertice vDestino = buscarVertice(destino);
@@ -149,7 +195,6 @@ public class Grafo {
         distancias[indiceOrigen] = 0;
 
         for (int i = 0; i < n; i++) {
-            // Buscar vértice con distancia mínima no visitado
             int u = -1;
             int minPath = Integer.MAX_VALUE;
             for (int j = 0; j < n; j++) {
@@ -159,8 +204,8 @@ public class Grafo {
                 }
             }
 
-            if (u == -1) break; // Inalcanzables
-            if (vertices.get(u).getNombre().equals(vDestino.getNombre())) break; // Llegamos al destino
+            if (u == -1) break; 
+            if (vertices.get(u).getNombre().equals(vDestino.getNombre())) break; 
 
             visitados[u] = true;
             Vertice verticeU = vertices.get(u);
@@ -178,10 +223,9 @@ public class Grafo {
             }
         }
 
-        // Reconstruir la ruta (se guarda del destino al origen)
         Lista<Vertice> ruta = new Lista<>();
         int indiceActual = obtenerIndice(vDestino);
-        if (distancias[indiceActual] == Integer.MAX_VALUE) return ruta; // Retorna vacía si no hay ruta
+        if (distancias[indiceActual] == Integer.MAX_VALUE) return ruta; 
 
         Vertice actual = vDestino;
         while (actual != null) {
@@ -191,6 +235,11 @@ public class Grafo {
         return ruta;
     }
 
+    /**
+     * Obtiene el índice numérico de un vértice según su posición en la lista.
+     * * @param v El vértice a localizar.
+     * @return Índice entero de la posición, o -1 si no existe.
+     */
     private int obtenerIndice(Vertice v) {
         for (int i = 0; i < vertices.size(); i++) {
             if (vertices.get(i).getNombre().equals(v.getNombre())) return i;
